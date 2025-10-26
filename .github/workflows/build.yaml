@@ -1,9 +1,6 @@
 name: Build Golang App Sytem Order
 run-name: Building Golang app for 3 major Platform
-on:
-    push:
-        tags:
-            - 'v*'
+on: [push]
 jobs:
   Explore-Gihub-Actions:
     runs-on: ubuntu-latest
@@ -15,9 +12,9 @@ jobs:
       - name: Build app for Linux amd64
         run: GOOS=linux GOARCH=amd64 go build -o playground_linux_amd64 .
       - name: Build app for Linux arm64
-        run: GOOS=linux GOARCH=amd64 go build -o playground_linux_arm64 .
+        run: GOOS=linux GOARCH=arm64 go build -o playground_linux_arm64 .
       - name: Build app for Darwin arm64
-        run: GOOS=darwin GOARCH=amd64 go build -o playground_darwin_arm64 .
+        run: GOOS=darwin GOARCH=arm64 go build -o playground_darwin_arm64 .
       - name: Upload artifact for windows
         uses: actions/upload-artifact@v4
         with:
