@@ -1,6 +1,9 @@
 name: Build Golang App Sytem Order
 run-name: Building Golang app for 3 major Platform
-on: [push]
+on:
+    push:
+        tags:
+            - 'v*'
 jobs:
   Explore-Gihub-Actions:
     runs-on: ubuntu-latest
