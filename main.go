@@ -63,6 +63,8 @@ func main() {
 				panic("Jumlah tidak valid")
 			}
 			system.AddOrder(item, qty)
+		case "3":
+			system.ShowOrders()
 		case "0":
 			fmt.Println("Terima kasih!")
 			os.Exit(0)
