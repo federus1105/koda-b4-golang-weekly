@@ -7,6 +7,7 @@ import (
 type OrderInterface interface {
 	ShowMenu()
 	AddOrder()
+	ShowOrders()
 }
 
 type Order struct {
@@ -45,5 +46,20 @@ func (o *OrderSystem) AddOrder(itemName string, quantity int) {
 		Quantity: quantity,
 		Total:    total,
 	})
-	fmt.Printf("Pesanan %s, dengan jumlah %d berhasil. Total : %f\n", itemName, quantity, total)
+	fmt.Printf("Pesanan %s, dengan jumlah %d berhasil. Total : %.2f\n", itemName, quantity, total)
+}
+
+
+func (o *OrderSystem) ShowOrders() {
+	if len(o.Orders) == 0 {
+		fmt.Println("Pesanan belum ada")
+		return
+	}
+	fmt.Println("====   DAFTAR PESANAN  =====")
+	var grandTotal float64
+	for i, order := range o.Orders {
+		fmt.Printf("%d. %s x %d - Rp %.2f\n", i+1, order.ItemName, order.Quantity, order.Total)
+		grandTotal += order.Total
+	}
+	fmt.Printf("\nTotal Keseluruhan : Rp %.2f\n", grandTotal)
 }
