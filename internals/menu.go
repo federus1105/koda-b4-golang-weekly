@@ -1,6 +1,6 @@
 package internals
 
-type Menu struct {
+type MenuItem struct {
 	Name  string
 	Price float64
 	Type  string
