@@ -2,12 +2,15 @@ package internals
 
 import (
 	"fmt"
+	"sync"
+	"time"
 )
 
 type OrderInterface interface {
 	ShowMenu()
 	AddOrder()
 	ShowOrders()
+	ProcessOrders()
 }
 
 type Order struct {
@@ -49,7 +52,6 @@ func (o *OrderSystem) AddOrder(itemName string, quantity int) {
 	fmt.Printf("Pesanan %s, dengan jumlah %d berhasil. Total : %.2f\n", itemName, quantity, total)
 }
 
-
 func (o *OrderSystem) ShowOrders() {
 	if len(o.Orders) == 0 {
 		fmt.Println("Pesanan belum ada")
@@ -62,4 +64,38 @@ func (o *OrderSystem) ShowOrders() {
 		grandTotal += order.Total
 	}
 	fmt.Printf("\nTotal Keseluruhan : Rp %.2f\n", grandTotal)
+}
+
+func (o *OrderSystem) ProcessOrders() {
+	if len(o.Orders) == 0 {
+		fmt.Println("Tidak ada pesanan yang diproses.")
+		return
+	}
+
+	fmt.Println("Memproses Pesanan...")
+
+	var wg sync.WaitGroup
+	results := make(chan string, len(o.Orders))
+
+	for _, ord := range o.Orders {
+		wg.Add(1)
+		go func(order Order) {
+			defer wg.Done()
+			time.Sleep(2 * time.Second)
+			results <- fmt.Sprintf("Pesanan %s, dengan jumlah %d selesai diproses!", order.ItemName, order.Quantity)
+		}(ord)
+	}
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	for res := range results {
+		fmt.Println("\n========================================")
+		fmt.Println(res)
+		fmt.Println("========================================")
+	}
+
+	fmt.Printf("\nSemua pesanan selesai!\n")
 }
