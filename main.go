@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -43,6 +44,12 @@ func main() {
 
 		switch choice {
 		case "1":
+			newData, err := internals.GetData(15 * time.Second)
+			if err != nil {
+				fmt.Println("Gagal memuat data:", err)
+				break
+			}
+			system.Menu = newData
 			system.ShowMenu()
 		case "2":
 			system.ShowMenu()
@@ -64,7 +71,7 @@ func main() {
 			system.ProcessOrders()
 		case "5":
 			fmt.Println("Membersihkan cache....")
-			cachePath := "C:/Users/FEDERU~1/AppData/Local/Temp/data.json"
+			cachePath := filepath.Join(os.TempDir(), "data.json")
 			if _, err := os.Stat(cachePath); err == nil {
 				if err := os.Remove(cachePath); err != nil {
 					fmt.Println("Gagal hapus:", err)
