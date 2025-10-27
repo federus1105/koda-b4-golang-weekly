@@ -2,43 +2,29 @@ package main
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/federus1105/koda-b4-golang-weekly/internals"
 )
 
 func main() {
-
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("error:", r)
 			main()
 		}
 	}()
-	
-	resp, err := http.Get("https://raw.githubusercontent.com/federus1105/koda-b4-golang-weekly-data/refs/heads/main/data.json")
+
+	data, err := internals.GetData(15 * time.Millisecond)
 	if err != nil {
-		fmt.Println("Fecth data failed!")
+		fmt.Println(err)
 	}
-
-	var menu []internals.MenuItem
-	body, err := io.ReadAll(
-		resp.Body,
-	)
-
-	if err != nil {
-		fmt.Println("Failed to read body")
-	}
-
-	json.Unmarshal(body, &menu)
 	system := &internals.OrderSystem{
-		Menu: menu,
+		Menu: data,
 	}
 	reader := bufio.NewReader(os.Stdin)
 
