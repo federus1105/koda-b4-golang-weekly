@@ -2,7 +2,10 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -18,19 +21,24 @@ func main() {
 			main()
 		}
 	}()
+	
+	resp, err := http.Get("https://raw.githubusercontent.com/federus1105/koda-b4-golang-weekly-data/refs/heads/main/data.json")
+	if err != nil {
+		fmt.Println("Fecth data failed!")
+	}
 
+	var menu []internals.MenuItem
+	body, err := io.ReadAll(
+		resp.Body,
+	)
+
+	if err != nil {
+		fmt.Println("Failed to read body")
+	}
+
+	json.Unmarshal(body, &menu)
 	system := &internals.OrderSystem{
-		Menu: []internals.MenuItem{
-			{Name: "Nasi Uduk", Price: 15000, Type: "Makanan"},
-			{Name: "Ayam Bakar", Price: 25000, Type: "Makanan"},
-			{Name: "Ayam Geprek", Price: 20000, Type: "Makanan"},
-			{Name: "Americano", Price: 15000, Type: "Minuman"},
-			{Name: "Hazelnut Latte", Price: 25000, Type: "Minuman"},
-			{Name: "Sanger Expresso", Price: 20000, Type: "Minuman"},
-			{Name: "Strawberry Mojito", Price: 15000, Type: "Minuman"},
-			{Name: "Lime Lcy", Price: 25000, Type: "Minuman"},
-			{Name: "Lemon Tea", Price: 20000, Type: "Minuman"},
-		},
+		Menu: menu,
 	}
 	reader := bufio.NewReader(os.Stdin)
 
