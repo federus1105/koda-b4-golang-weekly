@@ -19,7 +19,7 @@ func main() {
 		}
 	}()
 
-	data, err := internals.GetData(15 * time.Millisecond)
+	data, err := internals.GetData(15 * time.Second)
 	if err != nil {
 		fmt.Println(err)
 	}
