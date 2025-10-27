@@ -34,6 +34,7 @@ func main() {
 		fmt.Println("2. Tambah Pesanan")
 		fmt.Println("3. Lihat Pesanan")
 		fmt.Println("4. Proses Pesanan")
+		fmt.Println("5. Bersihkan Cache")
 		fmt.Println("\n0. Keluar")
 		fmt.Print("Pilih menu: ")
 
@@ -61,6 +62,20 @@ func main() {
 			system.ShowOrders()
 		case "4":
 			system.ProcessOrders()
+		case "5":
+			fmt.Println("Membersihkan cache....")
+			cachePath := "data.json"
+			if _, err := os.Stat(cachePath); err == nil {
+				os.Remove(cachePath)
+				fmt.Println("Cache lama dihapus.")
+			}
+			newData, err := internals.GetData(15 * time.Second)
+			if err != nil {
+				fmt.Println("Gagal memperbarui data:", err)
+			} else {
+				system.Menu = newData
+				fmt.Println("Menu berhasil diperbarui.")
+			}
 		case "0":
 			fmt.Println("Terima kasih!")
 			os.Exit(0)
