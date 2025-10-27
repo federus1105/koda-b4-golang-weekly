@@ -10,9 +10,21 @@ import (
 	"time"
 
 	"github.com/federus1105/koda-b4-golang-weekly/internals"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	// ---  ENV LOAD ---
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Failed load .env", err)
+	}
+	// --- DEFAULT VALUE ---
+	varTime := internals.DefaultEnv("TIME_CACHE", "15")
+	times, err := strconv.Atoi(varTime)
+	if err != nil {
+		times = 15
+	}
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("error:", r)
@@ -20,7 +32,7 @@ func main() {
 		}
 	}()
 
-	data, err := internals.GetData(15 * time.Second)
+	data, err := internals.GetData(time.Duration(times) * time.Second)
 	if err != nil {
 		fmt.Println(err)
 	}
