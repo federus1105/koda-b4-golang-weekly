@@ -64,10 +64,15 @@ func main() {
 			system.ProcessOrders()
 		case "5":
 			fmt.Println("Membersihkan cache....")
-			cachePath := "data.json"
+			cachePath := "C:/Users/FEDERU~1/AppData/Local/Temp/data.json"
 			if _, err := os.Stat(cachePath); err == nil {
-				os.Remove(cachePath)
-				fmt.Println("Cache lama dihapus.")
+				if err := os.Remove(cachePath); err != nil {
+					fmt.Println("Gagal hapus:", err)
+				} else {
+					fmt.Println("Cache lama dihapus.")
+				}
+			} else {
+				fmt.Println("File tidak ditemukan:", err)
 			}
 			newData, err := internals.GetData(15 * time.Second)
 			if err != nil {
