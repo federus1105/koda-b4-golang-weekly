@@ -4,40 +4,19 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/federus1105/koda-b4-golang-weekly/internals"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	// ---  ENV LOAD ---
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Println("Failed load .env", err)
-	}
-	// --- DEFAULT VALUE ---
-	varTime := internals.DefaultEnv("TIME_CACHE", "15")
-	times, err := strconv.Atoi(varTime)
-	if err != nil {
-		times = 15
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Println("error:", r)
-			main()
-		}
-	}()
-
-	data, err := internals.GetData(time.Duration(times) * time.Second)
+	product, err := internals.InitDB()
 	if err != nil {
 		fmt.Println(err)
 	}
 	system := &internals.OrderSystem{
-		Menu: data,
+		Menu: product,
 	}
 	reader := bufio.NewReader(os.Stdin)
 
@@ -47,7 +26,6 @@ func main() {
 		fmt.Println("2. Tambah Pesanan")
 		fmt.Println("3. Lihat Pesanan")
 		fmt.Println("4. Proses Pesanan")
-		fmt.Println("5. Bersihkan Cache")
 		fmt.Println("\n0. Keluar")
 		fmt.Print("Pilih menu: ")
 
@@ -56,7 +34,7 @@ func main() {
 
 		switch choice {
 		case "1":
-			newData, err := internals.GetData(15 * time.Second)
+			newData, err := internals.InitDB()
 			if err != nil {
 				fmt.Println("Gagal memuat data:", err)
 				break
@@ -81,25 +59,6 @@ func main() {
 			system.ShowOrders()
 		case "4":
 			system.ProcessOrders()
-		case "5":
-			fmt.Println("Membersihkan cache....")
-			cachePath := filepath.Join(os.TempDir(), "data.json")
-			if _, err := os.Stat(cachePath); err == nil {
-				if err := os.Remove(cachePath); err != nil {
-					fmt.Println("Gagal hapus:", err)
-				} else {
-					fmt.Println("Cache lama dihapus.")
-				}
-			} else {
-				fmt.Println("File tidak ditemukan:", err)
-			}
-			newData, err := internals.GetData(15 * time.Second)
-			if err != nil {
-				fmt.Println("Gagal memperbarui data:", err)
-			} else {
-				system.Menu = newData
-				fmt.Println("Menu berhasil diperbarui.")
-			}
 		case "0":
 			fmt.Println("Terima kasih!")
 			os.Exit(0)
