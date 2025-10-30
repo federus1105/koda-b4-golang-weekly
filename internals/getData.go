@@ -61,6 +61,8 @@ func InitDB() ([]MenuItem, error) {
 		fmt.Println("Failed to connect", err)
 	}
 
+	defer conn.Close(context.Background())
+
 	var Menu MenuItem
 
 	err = conn.QueryRow(context.Background(),
